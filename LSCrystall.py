@@ -90,11 +90,14 @@ def update_crystals(diode: str, values: list, now: datetime, service: apiclient.
                 print("Can't recognize %s crystal" % crystal)
                 return False
 
+    used = set()
     for color in colors:
         row = values[diode_indexes[color]]
         new_count = (int(row[1]) - count)
         row[1] = str(new_count)
-        row[3] = row[3] + ', %s  %d.%d.%d' % (diode, now.day, now.month, now.year)
+        if not color in used:
+            row[3] = row[3] + ', %s  %d.%d.%d' % (diode, now.day, now.month, now.year)
+        used.add(color)
         row[2] = check_quantity(new_count, color, threshold_crystal, "Кристаллы")
 
         request_body = {"valueInputOption": "RAW",
